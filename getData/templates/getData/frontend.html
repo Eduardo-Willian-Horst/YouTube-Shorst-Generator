@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração - ACQM API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 75rem;
+            margin: 0 auto;
+            background: white;
+            border: 0.0625rem solid #ddd;
+        }
+        
+        h1 {
+            padding: 1.5rem;
+            border-bottom: 0.0625rem solid #ddd;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 0.0625rem solid #ddd;
+        }
+        
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: white;
+            border: none;
+            border-right: 0.0625rem solid #ddd;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .tab-button.active {
+            background: #333;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 0.0625rem solid #ddd;
+            cursor: pointer;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        .btn-primary {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+        
+        .btn-danger {
+            background: white;
+            color: #c00;
+            border-color: #c00;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 0.0625rem solid #ddd;
+            font-size: 0.875rem;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #333;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .file-upload {
+            position: relative;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 0.5rem;
+            background: #f5f5f5;
+            border: 0.0625rem solid #ddd;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .list-item {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 0.0625rem solid #ddd;
+        }
+        
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        
+        .list-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .list-item-info {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .list-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border: 0.0625rem solid;
+        }
+        
+        .badge-success {
+            background: #f0f9f0;
+            color: #0a0;
+            border-color: #0a0;
+        }
+        
+        .badge-danger {
+            background: #fff0f0;
+            color: #c00;
+            border-color: #c00;
+        }
+        
+        .badge-info {
+            background: #f0f0ff;
+            color: #00a;
+            border-color: #00a;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            max-width: 37.5rem;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 0.0625rem solid #ddd;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 0.0625rem solid #ddd;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 0.0625rem solid;
+        }
+        
+        .alert-success {
+            background: #f0f9f0;
+            color: #0a0;
+            border-color: #0a0;
+        }
+        
+        .alert-error {
+            background: #fff0f0;
+            color: #c00;
+            border-color: #c00;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 0.0625rem solid #ddd;
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .step-card {
+            background: #ffffff;
+            border: 0.0625rem solid #ddd;
+            padding: 1rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .console {
+            background: #111;
+            color: #eee;
+            border: 0.0625rem solid #222;
+            padding: 1rem;
+            max-height: 26rem;
+            min-height: 18rem;
+            overflow: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 70rem) {
+            .timeline {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 45rem) {
+            .timeline {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Configuração - ACQM API</h1>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('panel')">Painel de controle</button>
+            <button class="tab-button" onclick="showTab('configs')">Configurações de Canais</button>
+            <button class="tab-button" onclick="showTab('credentials')">Credenciais</button>
+            <button class="tab-button" onclick="showTab('videos')">Vídeos</button>
+        </div>
+
+        <div id="panel" class="tab-content active">
+            <div class="section-header">
+                <h2 class="section-title">Painel de controle</h2>
+                <div class="list-item-actions">
+                    <button class="btn btn-secondary" onclick="panelRefresh()">Atualizar</button>
+                    <button class="btn btn-primary" onclick="panelStartAll()">Start all</button>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-item-info" style="margin-bottom: 1rem;">
+                    Clique em um passo para continuar a partir dele. Segure Shift para executar somente o passo.
+                </div>
+                <div class="list-item-actions" style="flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="panelStartAll()">Start all</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('getdata', event)">Buscar</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('download', event)">Download</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('extractaudio', event)">Áudio</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('transcribe', event)">Transcrever</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('process_clips', event)">Clipes</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('markprocessed', event)">Marcar</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('upload', event)">Upload</button>
+                    <button class="btn btn-secondary" onclick="panelStartFrom('clear', event)">Limpar</button>
+                </div>
+            </div>
+
+            <div class="panel-grid" style="margin-top: 1rem;">
+                <div class="list-item">
+                    <div class="list-item-header" style="align-items: center;">
+                        <div>
+                            <div class="list-item-title">Linha do tempo</div>
+                            <div class="list-item-info" id="panel-run-summary">Nenhuma execução carregada</div>
+                        </div>
+                        <div class="list-item-actions">
+                            <select id="panel-run-select" onchange="panelSelectRunFromDropdown()"></select>
+                        </div>
+                    </div>
+                    <div id="panel-timeline" class="timeline" style="margin-top: 1rem;"></div>
+                </div>
+
+                <div class="list-item" style="background: #111; border-color: #222;">
+                    <div class="list-item-header" style="align-items: center;">
+                        <div class="list-item-title" style="color: #eee;">Console</div>
+                        <div class="list-item-actions">
+                            <button class="btn btn-secondary" onclick="panelClearTerminal()">Limpar</button>
+                            <button class="btn btn-secondary" onclick="panelToggleAutoscroll()">Auto-scroll: <span id="panel-autoscroll-label">on</span></button>
+                        </div>
+                    </div>
+                    <div id="panel-terminal" class="console" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="configs" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">Configurações de Canais</h2>
+                <button class="btn btn-primary" onclick="openConfigModal()">Nova Configuração</button>
+            </div>
+            <div id="configs-list"></div>
+        </div>
+        
+        <div id="credentials" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">Credenciais</h2>
+                <button class="btn btn-primary" onclick="openCredentialModal()">Nova Credencial</button>
+            </div>
+            <div id="credentials-list"></div>
+        </div>
+        
+        <div id="videos" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">Vídeos em Processamento</h2>
+            </div>
+            <div id="videos-list"></div>
+        </div>
+    </div>
+    
+    <div id="config-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Configuração de Canal</h3>
+                <button class="close-modal" onclick="closeConfigModal()">&times;</button>
+            </div>
+            <div id="config-alert"></div>
+            <form id="config-form">
+                <input type="hidden" id="config-id">
+                <div class="form-group">
+                    <label>ID do Canal de Destino *</label>
+                    <input type="text" id="config-target-channel-id" required>
+                </div>
+                <div class="form-group">
+                    <label>IDs dos Canais Fonte (separados por vírgula) *</label>
+                    <textarea id="config-source-channel-ids" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Credenciais</label>
+                    <select id="config-credentials-id">
+                        <option value="">Nenhuma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="config-is-active" checked>
+                        <label for="config-is-active">Ativo</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeConfigModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="credential-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Credenciais</h3>
+                <button class="close-modal" onclick="closeCredentialModal()">&times;</button>
+            </div>
+            <div id="credential-alert"></div>
+            <form id="credential-form">
+                <input type="hidden" id="credential-id">
+                <div class="form-group">
+                    <label>ID do Canal *</label>
+                    <input type="text" id="credential-channel-id" required>
+                </div>
+                <div class="form-group">
+                    <label>YouTube API Key</label>
+                    <input type="text" id="credential-api-key">
+                </div>
+                <div class="form-group">
+                    <label>Caminho do Arquivo client_secret.json</label>
+                    <input type="text" id="credential-file-path" placeholder="Ou faça upload abaixo">
+                </div>
+                <div class="form-group">
+                    <label>Upload de Arquivo client_secret.json</label>
+                    <div class="file-upload">
+                        <input type="file" id="credential-file-upload" accept=".json">
+                        <label for="credential-file-upload" class="file-upload-label">
+                            Selecionar arquivo
+                        </label>
+                    </div>
+                    <div id="credential-file-name" style="margin-top: 0.5rem; font-size: 0.875rem; color: #666;"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCredentialModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '';
+        
+        let currentCredentialId = null;
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'panel') {
+                panelRefresh();
+            } else if (tabName === 'configs') {
+                loadConfigs();
+            } else if (tabName === 'credentials') {
+                loadCredentials();
+            } else if (tabName === 'videos') {
+                loadVideos();
+            }
+        }
+
+        const PANEL_STEPS = [
+            'getdata',
+            'download',
+            'extractaudio',
+            'transcribe',
+            'process_clips',
+            'markprocessed',
+            'upload',
+            'clear',
+        ];
+
+        let panelSelectedRunId = null;
+        let panelLastLogId = 0;
+        let panelAutoscroll = true;
+        let panelPollTimer = null;
+
+        function panelToggleAutoscroll() {
+            panelAutoscroll = !panelAutoscroll;
+            document.getElementById('panel-autoscroll-label').textContent = panelAutoscroll ? 'on' : 'off';
+        }
+
+        function panelClearTerminal() {
+            document.getElementById('panel-terminal').textContent = '';
+            panelLastLogId = 0;
+        }
+
+        function panelAppendTerminal(text) {
+            const el = document.getElementById('panel-terminal');
+            el.textContent += text + '\n';
+            if (panelAutoscroll) el.scrollTop = el.scrollHeight;
+        }
+
+        function panelStopPolling() {
+            if (panelPollTimer) {
+                clearInterval(panelPollTimer);
+                panelPollTimer = null;
+            }
+        }
+
+        function panelStartPolling() {
+            panelStopPolling();
+            panelPollTimer = setInterval(async () => {
+                if (!panelSelectedRunId) return;
+                await panelLoadRun(panelSelectedRunId);
+                await panelLoadLogs(panelSelectedRunId);
+            }, 1500);
+        }
+
+        function panelBadgeClass(status) {
+            if (status === 'success') return 'badge-success';
+            if (status === 'error') return 'badge-danger';
+            if (status === 'running') return 'badge-info';
+            return 'badge-info';
+        }
+
+        async function panelRefresh() {
+            await panelLoadRuns();
+            if (panelSelectedRunId) {
+                await panelLoadRun(panelSelectedRunId);
+                await panelLoadLogs(panelSelectedRunId);
+            }
+            panelStartPolling();
+        }
+
+        async function panelLoadRuns() {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/panel/flow/runs/?limit=50');
+                const data = await response.json();
+                const select = document.getElementById('panel-run-select');
+                select.innerHTML = '';
+                if (!data.runs || data.runs.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = 'Nenhuma execução';
+                    select.appendChild(opt);
+                    document.getElementById('panel-run-summary').textContent = 'Nenhuma execução carregada';
+                    document.getElementById('panel-timeline').innerHTML = '';
+                    return;
+                }
+
+                data.runs.forEach(run => {
+                    const opt = document.createElement('option');
+                    opt.value = run.id;
+                    opt.textContent = `#${run.id} ${run.status} ${run.start_from}`;
+                    select.appendChild(opt);
+                });
+
+                if (!panelSelectedRunId) {
+                    panelSelectedRunId = Number(select.options[0].value);
+                    select.value = String(panelSelectedRunId);
+                    panelClearTerminal();
+                } else {
+                    select.value = String(panelSelectedRunId);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar execuções:', error);
+            }
+        }
+
+        async function panelSelectRunFromDropdown() {
+            const select = document.getElementById('panel-run-select');
+            const val = select.value;
+            if (!val) return;
+            panelSelectedRunId = Number(val);
+            panelClearTerminal();
+            await panelLoadRun(panelSelectedRunId);
+            await panelLoadLogs(panelSelectedRunId);
+        }
+
+        async function panelLoadRun(runId) {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/panel/flow/runs/' + runId + '/');
+                const data = await response.json();
+                if (!response.ok) return;
+
+                const run = data.run;
+                document.getElementById('panel-run-summary').textContent =
+                    `Execução #${run.id} • status=${run.status} • início=${run.started_at || '-'} • fim=${run.finished_at || '-'} • atual=${run.current_step || '-'}`;
+
+                const stepMap = {};
+                (run.steps || []).forEach(s => { stepMap[s.step_name] = s; });
+
+                const timelineEl = document.getElementById('panel-timeline');
+                timelineEl.innerHTML = '';
+
+                PANEL_STEPS.forEach(stepName => {
+                    const s = stepMap[stepName] || { status: 'pending', ok_count: 0, error_count: 0 };
+                    const card = document.createElement('div');
+                    card.className = 'step-card';
+                    card.innerHTML = `
+                        <div class="step-title">${stepName}</div>
+                        <div>
+                            <span class="badge ${panelBadgeClass(s.status)}">${s.status}</span>
+                            <span class="badge badge-info" style="margin-left: 0.5rem;">ok: ${s.ok_count || 0}</span>
+                            <span class="badge badge-info" style="margin-left: 0.5rem;">erro: ${s.error_count || 0}</span>
+                        </div>
+                    `;
+                    timelineEl.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar execução:', error);
+            }
+        }
+
+        async function panelLoadLogs(runId) {
+            try {
+                const response = await fetch(API_BASE + `/getData/api/panel/flow/runs/${runId}/logs/?after_id=${panelLastLogId}`);
+                const data = await response.json();
+                if (!response.ok) return;
+
+                const lines = data.lines || [];
+                if (lines.length === 0) return;
+
+                lines.forEach(line => {
+                    const ts = line.created_at || '';
+                    const lvl = (line.level || 'info').toUpperCase();
+                    const step = line.step_name ? `[${line.step_name}]` : '';
+                    panelAppendTerminal(`${ts} ${lvl} ${step} ${line.message}`);
+                });
+                panelLastLogId = data.last_id || panelLastLogId;
+            } catch (error) {
+                console.error('Erro ao carregar logs:', error);
+            }
+        }
+
+        async function panelRun(startFrom, onlyStep) {
+            try {
+                panelAppendTerminal(`[ui] disparando start_from=${startFrom} only_step=${onlyStep}`);
+                const response = await fetch(API_BASE + '/getData/api/panel/flow/run/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ start_from: startFrom, only_step: Boolean(onlyStep) }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    panelAppendTerminal(`[ui] erro: ${data.error || 'falha ao executar'}`);
+                    return;
+                }
+                panelSelectedRunId = data.run.id;
+                panelLastLogId = 0;
+                document.getElementById('panel-terminal').textContent = '';
+                await panelLoadRuns();
+                await panelLoadRun(panelSelectedRunId);
+                await panelLoadLogs(panelSelectedRunId);
+            } catch (error) {
+                panelAppendTerminal(`[ui] erro: ${error.message}`);
+            }
+        }
+
+        function panelStartAll() {
+            panelRun('getdata', false);
+        }
+
+        function panelStartFrom(stepName, event) {
+            const onlyStep = Boolean(event && event.shiftKey);
+            panelRun(stepName, onlyStep);
+        }
+        
+        async function loadConfigs() {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/configs/');
+                const data = await response.json();
+                const listEl = document.getElementById('configs-list');
+                
+                if (data.configs && data.configs.length > 0) {
+                    listEl.innerHTML = data.configs.map(config => `
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div>
+                                    <div class="list-item-title">${config.target_channel_id}</div>
+                                    <div class="list-item-info">
+                                        Canais fonte: ${config.source_channel_ids_list.join(', ') || 'Nenhum'}
+                                    </div>
+                                    <div>
+                                        <span class="badge ${config.is_active ? 'badge-success' : 'badge-danger'}">
+                                            ${config.is_active ? 'Ativo' : 'Inativo'}
+                                        </span>
+                                        ${config.credentials_id ? '<span class="badge badge-info" style="margin-left: 0.5rem;">Credenciais configuradas</span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="btn btn-primary" onclick="editConfig(${config.id})">Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteConfig(${config.id})">Deletar</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<div class="empty-state"><p>Nenhuma configuração encontrada</p></div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar configurações:', error);
+            }
+        }
+        
+        async function loadCredentials() {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/credentials/');
+                const data = await response.json();
+                const listEl = document.getElementById('credentials-list');
+                
+                if (data.credentials && data.credentials.length > 0) {
+                    listEl.innerHTML = data.credentials.map(cred => `
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div>
+                                    <div class="list-item-title">${cred.channel_id}</div>
+                                    <div class="list-item-info">
+                                        API Key: ${cred.youtube_api_key ? cred.youtube_api_key.substring(0, 20) + '...' : 'Não configurada'}
+                                    </div>
+                                    <div>
+                                        <span class="badge ${cred.has_token ? 'badge-success' : 'badge-danger'}">
+                                            ${cred.has_token ? 'Token configurado' : 'Token não configurado'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="btn btn-primary" onclick="editCredential(${cred.id})">Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteCredential(${cred.id})">Deletar</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<div class="empty-state"><p>Nenhuma credencial encontrada</p></div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar credenciais:', error);
+            }
+        }
+        
+        async function loadVideos() {
+            try {
+                const response = await fetch(API_BASE + '/getData/in-progress/');
+                const data = await response.json();
+                const listEl = document.getElementById('videos-list');
+                
+                if (data.videos && data.videos.length > 0) {
+                    listEl.innerHTML = data.videos.map(video => `
+                        <div class="list-item">
+                            <div class="list-item-header">
+                                <div>
+                                    <div class="list-item-title">${video.video_id}</div>
+                                    <div class="list-item-info">
+                                        Canal fonte: ${video.source_channel_id} → Canal destino: ${video.target_channel_id}
+                                    </div>
+                                    <div>
+                                        <span class="badge ${video.is_finished ? 'badge-success' : 'badge-info'}">
+                                            ${video.is_finished ? 'Processado' : 'Em processamento'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<div class="empty-state"><p>Nenhum vídeo em processamento</p></div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar vídeos:', error);
+            }
+        }
+        
+        function openConfigModal(configId = null) {
+            document.getElementById('config-modal').classList.add('active');
+            document.getElementById('config-form').reset();
+            document.getElementById('config-id').value = '';
+            document.getElementById('config-alert').innerHTML = '';
+            
+            if (configId) {
+                editConfig(configId);
+            } else {
+                loadCredentialsForSelect();
+            }
+        }
+        
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.remove('active');
+        }
+        
+        function openCredentialModal(credId = null) {
+            document.getElementById('credential-modal').classList.add('active');
+            document.getElementById('credential-form').reset();
+            document.getElementById('credential-id').value = '';
+            document.getElementById('credential-alert').innerHTML = '';
+            document.getElementById('credential-file-name').textContent = '';
+            currentCredentialId = null;
+            
+            if (credId) {
+                editCredential(credId);
+            }
+        }
+        
+        function closeCredentialModal() {
+            document.getElementById('credential-modal').classList.remove('active');
+        }
+        
+        async function editConfig(id) {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/configs/' + id + '/');
+                const config = await response.json();
+                
+                document.getElementById('config-id').value = config.id;
+                document.getElementById('config-target-channel-id').value = config.target_channel_id;
+                document.getElementById('config-source-channel-ids').value = config.source_channel_ids;
+                document.getElementById('config-is-active').checked = config.is_active;
+                
+                await loadCredentialsForSelect();
+                document.getElementById('config-credentials-id').value = config.credentials_id || '';
+                
+                openConfigModal();
+            } catch (error) {
+                console.error('Erro ao carregar configuração:', error);
+            }
+        }
+        
+        async function editCredential(id) {
+            try {
+                document.getElementById('credential-modal').classList.add('active');
+                document.getElementById('credential-alert').innerHTML = '';
+                
+                const response = await fetch(API_BASE + '/getData/api/credentials/' + id + '/');
+                const cred = await response.json();
+                
+                document.getElementById('credential-id').value = cred.id;
+                document.getElementById('credential-channel-id').value = cred.channel_id || '';
+                document.getElementById('credential-api-key').value = cred.youtube_api_key || '';
+                document.getElementById('credential-file-path').value = cred.client_secret_file_path || '';
+                currentCredentialId = cred.id;
+            } catch (error) {
+                console.error('Erro ao carregar credencial:', error);
+                alert('Erro ao carregar credencial: ' + error.message);
+            }
+        }
+        
+        async function loadCredentialsForSelect() {
+            try {
+                const response = await fetch(API_BASE + '/getData/api/credentials/');
+                const data = await response.json();
+                const select = document.getElementById('config-credentials-id');
+                select.innerHTML = '<option value="">Nenhuma</option>';
+                
+                if (data.credentials) {
+                    data.credentials.forEach(cred => {
+                        const option = document.createElement('option');
+                        option.value = cred.id;
+                        option.textContent = cred.channel_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar credenciais:', error);
+            }
+        }
+        
+        document.getElementById('config-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('config-id').value;
+            const data = {
+                target_channel_id: document.getElementById('config-target-channel-id').value,
+                source_channel_ids: document.getElementById('config-source-channel-ids').value,
+                credentials_id: document.getElementById('config-credentials-id').value || null,
+                is_active: document.getElementById('config-is-active').checked
+            };
+            
+            try {
+                const url = id ? API_BASE + '/getData/api/configs/' + id + '/' : API_BASE + '/getData/api/configs/';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert('config-alert', 'Configuração salva com sucesso!', 'success');
+                    setTimeout(() => {
+                        closeConfigModal();
+                        loadConfigs();
+                    }, 1000);
+                } else {
+                    showAlert('config-alert', result.error || 'Erro ao salvar configuração', 'error');
+                }
+            } catch (error) {
+                showAlert('config-alert', 'Erro ao salvar configuração: ' + error.message, 'error');
+            }
+        });
+        
+        document.getElementById('credential-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('credential-id').value;
+            const fileInput = document.getElementById('credential-file-upload');
+            const filePath = document.getElementById('credential-file-path').value;
+            
+            if (fileInput.files.length > 0 && id) {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                
+                try {
+                    const uploadResponse = await fetch(API_BASE + '/getData/api/credentials/' + id + '/upload-secret/', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const uploadResult = await uploadResponse.json();
+                    
+                    if (!uploadResponse.ok) {
+                        showAlert('credential-alert', uploadResult.error || 'Erro ao fazer upload do arquivo', 'error');
+                        return;
+                    }
+                } catch (error) {
+                    showAlert('credential-alert', 'Erro ao fazer upload do arquivo: ' + error.message, 'error');
+                    return;
+                }
+            }
+            
+            const data = {
+                channel_id: document.getElementById('credential-channel-id').value,
+                youtube_api_key: document.getElementById('credential-api-key').value,
+                client_secret_file_path: filePath
+            };
+            
+            try {
+                const url = id ? API_BASE + '/getData/api/credentials/' + id + '/' : API_BASE + '/getData/api/credentials/';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert('credential-alert', 'Credencial salva com sucesso!', 'success');
+                    setTimeout(() => {
+                        closeCredentialModal();
+                        loadCredentials();
+                    }, 1000);
+                } else {
+                    showAlert('credential-alert', result.error || 'Erro ao salvar credencial', 'error');
+                }
+            } catch (error) {
+                showAlert('credential-alert', 'Erro ao salvar credencial: ' + error.message, 'error');
+            }
+        });
+        
+        document.getElementById('credential-file-upload').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                document.getElementById('credential-file-name').textContent = 'Arquivo selecionado: ' + e.target.files[0].name;
+            }
+        });
+        
+        async function deleteConfig(id) {
+            if (!confirm('Tem certeza que deseja deletar esta configuração?')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/getData/api/configs/' + id + '/', {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadConfigs();
+                } else {
+                    const result = await response.json();
+                    alert(result.error || 'Erro ao deletar configuração');
+                }
+            } catch (error) {
+                alert('Erro ao deletar configuração: ' + error.message);
+            }
+        }
+        
+        async function deleteCredential(id) {
+            if (!confirm('Tem certeza que deseja deletar esta credencial?')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/getData/api/credentials/' + id + '/', {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadCredentials();
+                } else {
+                    const result = await response.json();
+                    alert(result.error || 'Erro ao deletar credencial');
+                }
+            } catch (error) {
+                alert('Erro ao deletar credencial: ' + error.message);
+            }
+        }
+        
+        function showAlert(elementId, message, type) {
+            const alertEl = document.getElementById(elementId);
+            alertEl.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                alertEl.innerHTML = '';
+            }, 5000);
+        }
+        
+        panelRefresh();
+    </script>
+</body>
+</html>
