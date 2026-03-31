@@ -24,7 +24,7 @@ def extract_audio_from_video(video_id, r2_prefix=""):
                     '-i', temp_video_path,
                     '-vn',
                     '-acodec', 'libmp3lame',
-                    '-ab', '192k',
+                    '-ab', '64k',
                     '-ar', '44100',
                     '-y',
                     temp_audio_path

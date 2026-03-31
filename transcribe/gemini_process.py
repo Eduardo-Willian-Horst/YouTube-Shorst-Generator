@@ -12,7 +12,7 @@ def processar_audio_com_gemini(r2_audio_key, r2_prefix="", video_id="gemini_resu
     
     genai.configure(api_key=api_key)
     
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as temp_dir:
         temp_audio_path = os.path.join(temp_dir, "voice.mp3")
         
         if not download_file_from_r2(r2_audio_key, temp_audio_path):
@@ -63,4 +63,12 @@ Tome cuidado para não faltar nenhuma virgula delimitador entre os objetos nem e
         if not upload_string_to_r2(json_resultado, json_key):
             raise Exception(f"Falha ao salvar JSON no R2: {json_key}")
         
+        for attempt in range(5):
+            try:
+                if os.path.exists(temp_audio_path):
+                    os.remove(temp_audio_path)
+                break
+            except PermissionError:
+                time.sleep(0.4 * (attempt + 1))
+
         return json_resultado

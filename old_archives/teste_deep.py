@@ -1,11 +1,13 @@
 import google.generativeai as genai
 import time
 import os
+from decouple import config
 
 # 1. CONFIGURAÇÃO
-# Substitua pela sua chave de API
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBDkVukBvi1lhIcdbwm9zC0cqgKePk8DgI"
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+api_key = config("GOOGLE_API_KEY", default="").strip()
+if not api_key:
+    raise ValueError("GOOGLE_API_KEY não configurada nas variáveis de ambiente")
+genai.configure(api_key=api_key)
 
 def processar_audio_com_gemini(caminho_do_audio):
     print(f"--- Iniciando upload de: {caminho_do_audio} ---")

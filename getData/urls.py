@@ -19,4 +19,5 @@ urlpatterns = [
     path('api/panel/flow/runs/<int:run_id>/', views.api_panel_flow_run_detail, name='api_panel_flow_run_detail'),
     path('api/panel/flow/runs/<int:run_id>/logs/', views.api_panel_flow_run_logs, name='api_panel_flow_run_logs'),
     path('api/panel/flow/run/', views.api_panel_flow_run, name='api_panel_flow_run'),
+    path('api/generate-token/<str:target_channel_id>/', views.api_generate_channel_token, name='api_generate_channel_token'),
 ]

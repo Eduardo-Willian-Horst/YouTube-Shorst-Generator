@@ -163,7 +163,7 @@ def _run_flow_with_persistence(*, start_from: str, target_channel_id: str | None
                     continue
 
                 if step == "upload":
-                    res = _run_upload_step(target_channel_id=target_channel_id)
+                    res = _run_upload_step(target_channel_id=target_channel_id, flow_run=flow_run)
                     ok_list = res.get("ok") or []
                     err_list = res.get("error") or []
                     step_row.result = res
@@ -1062,7 +1062,7 @@ def _run_getdata_step(target_channel_id: str | None) -> dict:
     return {"created": created}
 
 
-def _run_upload_step(target_channel_id: str | None) -> dict:
+def _run_upload_step(target_channel_id: str | None, flow_run: FlowRun | None = None) -> dict:
     ok: list[str] = []
     error: list[str] = []
 
@@ -1075,9 +1075,29 @@ def _run_upload_step(target_channel_id: str | None) -> dict:
             .distinct()
         )
 
+    if flow_run:
+        _panel_log(
+            flow_run,
+            f"[upload] canais_alvo={len(target_channel_ids)} ids={','.join(target_channel_ids) if target_channel_ids else '-'}",
+            step_name="upload",
+        )
+
     for channel_id in target_channel_ids:
+        if flow_run:
+            _panel_log(
+                flow_run,
+                f"[upload] verificando próximo clipe para canal {channel_id}",
+                step_name="upload",
+            )
+
         clip_info = get_next_clip_to_upload(channel_id)
         if not clip_info:
+            if flow_run:
+                _panel_log(
+                    flow_run,
+                    f"[upload] nenhum clipe pendente para canal {channel_id}",
+                    step_name="upload",
+                )
             continue
 
         r2_key = clip_info["r2_key"]
@@ -1119,12 +1139,64 @@ def _run_upload_step(target_channel_id: str | None) -> dict:
 
             delete_file_from_r2(r2_key)
             ok.append(r2_key)
-            break
+
+            if flow_run:
+                _panel_log(
+                    flow_run,
+                    f"[upload] sucesso canal={channel_id} video_id={clip_info['video_id']} youtube_video_id={youtube_video_id} r2_key={r2_key}",
+                    step_name="upload",
+                )
+            continue
         except Exception as exc:
             error.append(f"{r2_key}: {str(exc)}")
+            if flow_run:
+                _panel_log(
+                    flow_run,
+                    f"[upload] erro canal={channel_id} r2_key={r2_key} detalhe={str(exc)}",
+                    step_name="upload",
+                    level=FlowLogLine.Level.ERROR,
+                )
             continue
 
     return {"ok": ok, "error": error}
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_generate_channel_token(request, target_channel_id: str):
+    try:
+        config_obj = ChannelConfig.objects.select_related("credentials").get(
+            target_channel_id=target_channel_id
+        )
+        if not config_obj.credentials:
+            return JsonResponse(
+                {"error": "Configuração não tem credenciais vinculadas"},
+                status=400,
+            )
+
+        cred = config_obj.credentials
+        cred.token_data = None
+        cred.token_file_path = ""
+        cred.save(update_fields=["token_data", "token_file_path", "updated_at"])
+
+        youtube_authenticator(target_channel_id)
+
+        return JsonResponse(
+            {
+                "status": "ok",
+                "message": "Token recriado com sucesso para o canal",
+                "target_channel_id": target_channel_id,
+                "credentials_id": cred.id,
+            },
+            status=200,
+        )
+    except ChannelConfig.DoesNotExist:
+        return JsonResponse(
+            {"error": "Configuração de canal não encontrada"},
+            status=404,
+        )
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @csrf_exempt

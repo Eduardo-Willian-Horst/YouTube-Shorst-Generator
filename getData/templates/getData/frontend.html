@@ -787,6 +787,7 @@
                                     </div>
                                 </div>
                                 <div class="list-item-actions">
+                                    <button class="btn btn-secondary" onclick="generateTokenForCredential(${cred.id})">Gerar novo token</button>
                                     <button class="btn btn-primary" onclick="editCredential(${cred.id})">Editar</button>
                                     <button class="btn btn-danger" onclick="deleteCredential(${cred.id})">Deletar</button>
                                 </div>
@@ -1073,6 +1074,51 @@
             setTimeout(() => {
                 alertEl.innerHTML = '';
             }, 5000);
+        }
+
+        async function generateTokenForCredential(credId) {
+            try {
+                const verifyResp = await fetch(API_BASE + '/getData/api/credentials/' + credId + '/verify/');
+                const verifyData = await verifyResp.json();
+                if (!verifyResp.ok) {
+                    alert(verifyData.error || 'Erro ao verificar credencial');
+                    return;
+                }
+
+                const linked = verifyData.linked_configs || [];
+                if (!linked.length) {
+                    alert('Nenhuma configuração de canal vinculada a esta credencial. Vincule em "Configurações de Canais" antes de gerar o token.');
+                    return;
+                }
+
+                let targetChannelId;
+                if (linked.length === 1) {
+                    targetChannelId = linked[0].target_channel_id;
+                } else {
+                    const ids = linked.map(c => c.target_channel_id).join(', ');
+                    const chosen = prompt('Esta credencial está vinculada a vários canais. Informe o ID do canal de destino desejado (' + ids + '):');
+                    if (!chosen) return;
+                    const match = linked.find(c => c.target_channel_id === chosen);
+                    if (!match) {
+                        alert('Canal informado não encontrado entre os vinculados.');
+                        return;
+                    }
+                    targetChannelId = match.target_channel_id;
+                }
+
+                const resp = await fetch(API_BASE + '/getData/api/generate-token/' + encodeURIComponent(targetChannelId) + '/', {
+                    method: 'POST'
+                });
+                const data = await resp.json();
+                if (resp.ok) {
+                    alert('Fluxo para gerar novo token iniciado. Complete o login na janela do navegador (YouTube).');
+                    loadCredentials();
+                } else {
+                    alert(data.error || 'Erro ao gerar novo token');
+                }
+            } catch (error) {
+                alert('Erro ao gerar novo token: ' + error.message);
+            }
         }
         
         panelRefresh();
